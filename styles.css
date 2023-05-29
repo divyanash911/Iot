@@ -1,0 +1,30 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+.alert {
+  background-color: #FFCCCC;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.controls {
+  background-color: #E6F2FF;
+  padding: 20px;
+}
+
+button {
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.chart-container {
+  width: 80%;
+  margin: 0 auto;
+}
