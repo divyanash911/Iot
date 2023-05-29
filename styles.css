@@ -29,11 +29,11 @@ button {
   margin: 0 auto;
 }
 
- .position{
-    background-color: greenyellow;
-    padding:20px;
-  }
+.position{
+  background-color: greenyellow;
+  padding:20px;
+}
 
-  #position-text {
-    color:gray;
-  }
+#position-text {
+  color:gray;
+}
