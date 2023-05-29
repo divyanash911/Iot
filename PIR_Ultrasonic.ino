@@ -1,5 +1,6 @@
 #include <HTTPClient.h>
 #include <WiFi.h>
+#include <stdlib.h>
 
 char ssid[] = "moto g22_9515";
 char password[] = "3b5bvrygds7irdj";
@@ -11,13 +12,34 @@ char password[] = "3b5bvrygds7irdj";
 #define OM2M_AE "User-Patterns"
 #define OM2M_DATA_CONT "What_Room_Is_Grandma_In"
 
-const int PirPin1 = 2;
-const int PirPin2 = 4;    
-const int PirPin3 = 5;
-const int PirPin4 = 18;
-const int PirPin5 = 19;
+const int PirPin1 = 4;
+const int PirPin2 = 13;    
+const int PirPin3 = 14;
+const int PirPin4 = 16;
+// const int PirPin5 = 17;
+
+const int trigPin1 = 18;
+const int echoPin1 = 19;
+
+const int trigPin2 = 21;
+const int echoPin2 = 22;
+
+const int trigPin3 = 23;
+const int echoPin3 = 25;
+
+const int trigPin4 = 26;
+const int echoPin4 = 27;
+
+long duration;
+long distance;
+long threshold = 4;
 
 HTTPClient http;
+
+int US1;
+int US2;
+int US3;
+int US4;
 
 // int i = 0;
 
@@ -36,73 +58,122 @@ void setup() {
     Serial.println("Connecting to WiFi...");
   }
 
-  // pinMode(PirPin1, INPUT);
-  // pinMode(PirPin2, INPUT);
+  Serial.println("Connected!!");
+
+  pinMode(PirPin1, INPUT);
+  pinMode(PirPin2, INPUT);
   pinMode(PirPin3, INPUT);
-  // pinMode(PirPin4, INPUT);
+  pinMode(PirPin4, INPUT);
   // pinMode(PirPin5, INPUT_PULLUP);
   // Serial.println("Dual PIR Sensor Control for Left and Right Motion Detection");
 
-  // digitalWrite(LedPin, LOW);   
+  // digitalWrite(LedPin, LOW);
+
+  pinMode(trigPin1, OUTPUT);
+  pinMode(echoPin1, INPUT); 
+
+  pinMode(trigPin2, OUTPUT);
+  pinMode(echoPin2, INPUT);
+
+  pinMode(trigPin3, OUTPUT);
+  pinMode(echoPin3, INPUT);
+
+  pinMode(trigPin4, OUTPUT);
+  pinMode(echoPin4, INPUT);
+
+
 }
 
 void loop() {
 
   Serial.println();
-  Serial.println();
+  // Serial.println();
 
   int Current_Room = 0;
-  int Room1 = 0;
-  int Room2 = 0;
-  int Room3 = 0;
-  int Room4 = 0;
-  int Room5 = 0;
+  int Current_Room_US = 0;
 
-  // if (motionDetected(PirPin1)) {
-  //   // digitalWrite(LedPin, HIGH);
-  //   Serial.println("Motion detected in Room 1");
-  //   Room1 = 1;
-  //   Current_Room = 1;
-  // }
-  // else {
-  //   Room1 = 0;
-  // }
+  // int Room1;
+  // int Room2;
+  // int Room3;
+  // int Room4;
 
-  // else if (motionDetected(PirPin2)) {
-  //   Serial.println("Motion detected in Room 2");
-  //   Room2 = 1;
-  //   Current_Room = 2;
-  // }
-  // else {
-  //   Room2 = 0;
-  // }
+  if (thresholdBroken(trigPin1, echoPin1)){
+    // Serial.println("Grandma is moving);
+    US1 = 1;
+    US2 = 0;
+    US3 = 0;
+    US4 = 0;
+  }
+  else if (thresholdBroken(trigPin2, echoPin2)){
+    // Serial.println("Grandma is moving);
+    US1 = 0;
+    US2 = 1;
+    US3 = 0;
+    US4 = 0;
+  }
+  else if (thresholdBroken(trigPin3, echoPin3)){
+    // Serial.println("Grandma is moving);
+    US1 = 0;
+    US2 = 0;
+    US3 = 1;
+    US4 = 0;
+  }
+  else if (thresholdBroken(trigPin4, echoPin4)){
+    // Serial.println("Grandma is moving);
+    US1 = 0;
+    US2 = 0;
+    US3 = 0;
+    US4 = 1;
+  }
 
-  if (motionDetected(PirPin3)) {
-    Serial.println("Motion detected in Room 3");
-    Room3 = 1;
+  if (motionDetected(PirPin1) == 0 && US1 == 1) {
+    // digitalWrite(LedPin, HIGH);
+    Serial.println("Grandma has left the house");
+
+    Current_Room = 0;
+  }
+  else if (motionDetected(PirPin1) == 1 && US1 == 1) {
+    Serial.println("Grandma has entered the house");
+
+    Current_Room = 1;
+  }
+  else if (motionDetected(PirPin2) == 0 && US2 == 1) {
+    Serial.println("Grandma is going from room 2 to room 1");
+    
+    Current_Room = 1;
+  }
+  else if (motionDetected(PirPin2) == 1 && US2 == 1) {
+    Serial.println("Grandma is going from room 1 to room 2");
+    
+    Current_Room = 2;
+  }
+  else if (motionDetected(PirPin3) == 0 && US3 == 1) {
+    Serial.println("Grandma is going from room 3 to room 2");
+    
+    Current_Room = 2;
+  }
+  else if (motionDetected(PirPin3) == 1 && US3 == 1) {
+    Serial.println("Grandma is going from room 2 to room 3");
+    
     Current_Room = 3;
   }
-  // else {
-  //   Room3 = 0;
-  // }
-
-  // else if (motionDetected(PirPin4)) {
-  //   Serial.println("Motion detected in Room 4");
-  //   Room4 = 1;
-  //   Current_Room = 4;
-  // }
-  // else {
-  //   Room4 = 0;
-  // }
-
+  else if (motionDetected(PirPin4) == 0 && US4 == 1) {
+    Serial.println("Grandma is going from room 4 to room 3");
+    
+    Current_Room = 3;
+  }
+  else if (motionDetected(PirPin4) == 1 && US4 == 1) {
+    Serial.println("Grandma is going from room 3 to room 4");
+    
+    Current_Room = 4;
+  }
   // else if (motionDetected(PirPin5)) {
   //   Serial.println("Motion detected in Room 5");
   //   Room5 = 1;
   //   Current_Room = 5;
   // }
-  // else {
-  //   Room5 = 0;
-  // }
+
+  // delay(100);
 
   // OM2M
 
@@ -144,5 +215,31 @@ void loop() {
 }
 
 bool motionDetected(int pirPin) {
-  return digitalRead(pirPin)==HIGH;
+  if(digitalRead(pirPin) == HIGH){
+    return 1;
+  }
+  else{
+    return 0;
+  }
+}
+
+bool thresholdBroken(int trigPin, int echoPin) {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+
+  distance = duration * 0.034/2;
+
+  if (distance < threshold){
+    // Serial.println("THE GRANDMA IS MOVING!!");
+    return 1;
+  }
+  else {
+    return 0;
+  }
 }
