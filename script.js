@@ -1,17 +1,57 @@
-// smoke detection
-function readSmokeDetectionStatus(apiKey) {
-  var url = `https://api.example.com/smoke/status?api_key=${apiKey}`;
+function readLPGDetectionStatus(apiKey) {
+  var url = `https://api.thingspeak.com/channels/2151464/fields/1.json?api_key=${apiKey}&results=2`;
 
   fetch(url)
     .then(response => response.json())
     .then(data => {
-      var smokeAlert = document.getElementById("smokeAlert");
+      var lpgAlert = document.getElementById("lpgAlert");
       if (data.status === 1) {
-        smokeAlert.innerHTML = "Smoke detected! Please evacuate.";
-        smokeAlert.style.color = "red";
+        lpgAlert.innerHTML = "LPG leak detected! Please evacuate.";
+        lpgAlert.style.color = "red";
       } else {
-        smokeAlert.innerHTML = "No smoke detected";
-        smokeAlert.style.color = "black";
+        lpgAlert.innerHTML = "No LPG leak detected";
+        lpgAlert.style.color = "black";
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
+
+// smoke detection
+function readFireDetectionStatus(apiKey) {
+  var url = `https://api.thingspeak.com/channels/2151464/fields/1.json?api_key=${apiKey}&results=2`;
+    console.log('yes');
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+    // var fireAlert = document.getElementById("fireAlert");
+    // console.log('yes');
+    console.log(data);
+    var field1Value1 =data.feeds[1].field1;
+    console.log(field1Value1);
+      if (field1Value1 === '1') {
+        // console.log('ifyes')
+        const divid = document.getElementById('alerts1');
+        if(divid.innerHTML === "")
+        {
+          // console.log('yesif');
+          // fireAlert.innerHTML = "Fire detected! Please evacuate.";
+          // fireAlert.style.color = "red";
+          const div = document.createElement('div');
+          div.classList.add('alert');
+          div.innerHTML = `<h2>Fire Alerts</h2>
+          <p id="fireAlert" style="color: red;">Fire detected! Please evacuate.</p>
+          <button onclick="acknowledgeAlert()">OK</button>
+          `;
+          document.getElementById('alerts1').appendChild(div);
+        }
+      }
+      else {
+        const div = document.getElementById('alerts1');
+        const child = div.querySelector('.alert');
+        div.removeChild(child);
+        // div.appendChild(clas);
       }
     })
     .catch(error => {
@@ -199,20 +239,13 @@ function toggleDoor() {
   // Example usage
   readFromThingSpeak('HZRO9QQ17NCBHIZF');
   readAndDisplayData('7AUH6ES17NOR5GPL');
+  // readFireDetectionStatus('HZRO9QQ17NCBHIZF');
   setInterval(function() {
-    readSmokeDetectionStatus('YOUR_API_KEY');
+    readFireDetectionStatus('HZRO9QQ17NCBHIZF');
   }, 5000); // Read the smoke detection status every 5 seconds (adjust the interval as needed)
-  
 
-  fetch('http://localhost:8000/endpoint')
-.then(response => response.json())
-.then(data => {
-    if(data){
-    console.log(data);
-    
-    }
-    else{
-      console.log("error")
-    }
-})
+  // setInterval(function() {
+  //   readLPGDetectionStatus('YOUR_API_KEY');
+  // }, 5000); // Read the smoke detection status every 5 seconds (adjust the interval as needed)
+  
   

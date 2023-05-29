@@ -7,12 +7,8 @@
 </head>
 <body>
   <h1>Smart Home Control</h1>
-  
-  <div class="alert">
-    <h2>Smoke Alerts</h2>
-    <p id="smokeAlert">No smoke detected</p>
-    <button onclick="acknowledgeAlert()">OK</button>
-  </div>
+<div id="alerts"></div>
+<div id="alerts1"></div>
   
   <div class="controls">
     <h2>Controls</h2>
@@ -23,11 +19,6 @@
   <div class="chart-container">
     <canvas id="chart"></canvas>
   </div>
-  
-   <div class="position">
-        <h2>Current location</h2>
-        <p id="position-text">In Room 1</p>
-    </div>
 
   <script src="script.js"></script>
 </body>
