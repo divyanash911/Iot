@@ -28,3 +28,12 @@ button {
   width: 80%;
   margin: 0 auto;
 }
+
+ .position{
+    background-color: greenyellow;
+    padding:20px;
+  }
+
+  #position-text {
+    color:gray;
+  }
