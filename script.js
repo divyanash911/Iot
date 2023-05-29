@@ -1,11 +1,12 @@
+let fieldRoom;
 function readLPGDetectionStatus(apiKey) {
-  var url = `https://api.thingspeak.com/channels/2151464/fields/1.json?api_key=${apiKey}&results=2`;
+  var url = `https://api.thingspeak.com/channels/2163504/fields/1.json?api_key=${apiKey}&results=2`;
 
   fetch(url)
     .then(response => response.json())
     .then(data => {
       // var lpgAlert = document.getElementById("lpgAlert");
-    var field1Value2 =data.feeds[1].field1;
+    var field1Value2 =data.feeds[1].field2;
       if (field1Value2 === '1') {
         // console.log('ifyes')
         const divid = document.getElementById('alerts');
@@ -36,7 +37,7 @@ function readLPGDetectionStatus(apiKey) {
 
 // smoke detection
 function readFireDetectionStatus(apiKey) {
-  var url = `https://api.thingspeak.com/channels/2151464/fields/1.json?api_key=${apiKey}&results=2`;
+  var url = `https://api.thingspeak.com/channels/2165472/fields/1.json?api_key=${apiKey}&results=2`;
     // console.log('yes');
   fetch(url)
     .then(response => response.json())
@@ -78,7 +79,8 @@ function readFireDetectionStatus(apiKey) {
 // Function to write data to ThingSpeak
 function writeToThingSpeak(apiKey, field1Value, fieldNumber) {
     // var channelID = '2151464';
-    var url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${fieldNumber}=${field1Value}`;
+    var url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${fieldRoom}=${field1Value}`;
+    console.log(fieldRoom);
     console.log(field1Value);
     fetch(url, {
       method: 'POST',
@@ -102,7 +104,7 @@ function writeToThingSpeak(apiKey, field1Value, fieldNumber) {
 //  Health Data
 // Function to read data from ThingSpeak and display in a graph
 function readAndDisplayData(apiKey) {
-    var channelID = '2165791'; // Replace with your ThingSpeak channel ID
+    var channelID = '2151521'; // Replace with your ThingSpeak channel ID
     var url = `https://api.thingspeak.com/channels/${channelID}/fields/1-4.json?api_key=${apiKey}&results=10`;
   
     fetch(url)
@@ -111,8 +113,6 @@ function readAndDisplayData(apiKey) {
         var labels = [];
         var heartRateData = [];
         var oxygenLevelData = [];
-        var systolicPressureData = [];
-        var diastolicPressureData = [];
   
         // Extract data from ThingSpeak response
         for (var i = 0; i < data.feeds.length; i++) {
@@ -120,8 +120,6 @@ function readAndDisplayData(apiKey) {
           labels.push(feed.created_at);
           heartRateData.push((feed.field1));
           oxygenLevelData.push((feed.field4));
-          systolicPressureData.push((feed.field7));
-          diastolicPressureData.push((feed.field8));
         }
         // console.log(feed.field7);
   
@@ -142,18 +140,6 @@ function readAndDisplayData(apiKey) {
                 label: 'Oxygen Level',
                 data: oxygenLevelData,
                 borderColor: 'blue',
-                fill: false,
-              },
-              {
-                label: 'Systolic Pressure',
-                data: systolicPressureData,
-                borderColor: 'green',
-                fill: false,
-              },
-              {
-                label: 'Diastolic Pressure',
-                data: diastolicPressureData,
-                borderColor: 'orange',
                 fill: false,
               },
             ],
@@ -193,12 +179,12 @@ function toggleLight() {
   
     if (lightButton.innerHTML === "Turn Light On") {
         lightButton.innerHTML = "Turn Light Off";
-        writeToThingSpeak('GFLOH9S1XRN3NPPS', 1, 1);
+        writeToThingSpeak('CQA08TED4R0B70XX', 1, fieldRoom);
         console.log("Turning light on");
     }
     else{
         lightButton.innerHTML = "Turn Light On";
-        writeToThingSpeak('GFLOH9S1XRN3NPPS', 0, 1);
+        writeToThingSpeak('CQA08TED4R0B70XX', 0, fieldRoom);
         console.log("Turning light off");
     }
 
@@ -212,28 +198,28 @@ function toggleDoor() {
   
     if (doorButton.innerHTML === "Open Door") {
       doorButton.innerHTML = "Close Door";
-      writeToThingSpeak('GFLOH9S1XRN3NPPS', 1, 2); // Write "1" to ThingSpeak to open the door
+      writeToThingSpeak('UGEDUGRFKOC59M9R', 1, 1); // Write "1" to ThingSpeak to open the door
       console.log("Opening the door");
     } else {
       doorButton.innerHTML = "Open Door";
-      writeToThingSpeak('GFLOH9S1XRN3NPPS', 0, 2); // Write "0" to ThingSpeak to close the door
+      writeToThingSpeak('UGEDUGRFKOC59M9R', 0, 1); // Write "0" to ThingSpeak to close the door
       console.log("Closing the door");
     }
   }
   
-  function acknowledgeAlert() {
-    writeToThingSpeak('GFLOH9S1XRN3NPPS', 0, 3); // Write "0" to ThingSpeak to acknowledge the alert
-  }  
+  // function acknowledgeAlert() {
+  //   writeToThingSpeak('GFLOH9S1XRN3NPPS', 0, 3); // Write "0" to ThingSpeak to acknowledge the alert
+  // }  
 
   // Example usage
-  readAndDisplayData('7AUH6ES17NOR5GPL');
+  readAndDisplayData('2INB1VD6F20KFCG6');
   // readFireDetectionStatus('HZRO9QQ17NCBHIZF');
   setInterval(function() {
-    readFireDetectionStatus('HZRO9QQ17NCBHIZF');
+    readFireDetectionStatus('N62FEX47OUTCEIL4');
   }, 5000); // Read the smoke detection status every 5 seconds (adjust the interval as needed)
 
   setInterval(function() {
-    readLPGDetectionStatus('HZRO9QQ17NCBHIZF');
+    readLPGDetectionStatus('DOIX278CD05M3IPD');
   }, 5000); // Read the smoke detection status every 5 seconds (adjust the interval as needed)
   
   fetch('http://localhost:8000/endpoint')
@@ -243,7 +229,7 @@ function toggleDoor() {
       console.log(data);
       const text=document.getElementById("position-text");
       text.innerHTML=`Granny is in room ${data["data"]}`;
-
+      fieldRoom=data["data"];
       }
       else{
         console.log("error")
