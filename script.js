@@ -203,4 +203,16 @@ function toggleDoor() {
     readSmokeDetectionStatus('YOUR_API_KEY');
   }, 5000); // Read the smoke detection status every 5 seconds (adjust the interval as needed)
   
+
+  fetch('http://localhost:8000/endpoint')
+.then(response => response.json())
+.then(data => {
+    if(data){
+    console.log(data);
+    
+    }
+    else{
+      console.log("error")
+    }
+})
   
