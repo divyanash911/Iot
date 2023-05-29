@@ -1,39 +1,39 @@
 body {
-  font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif;
 }
 
 h1 {
-  text-align: center;
+    text-align: center;
 }
 
 .alert {
-  background-color: #FFCCCC;
-  padding: 20px;
-  margin-bottom: 20px;
+    background-color: #FFCCCC;
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
 .controls {
-  background-color: #E6F2FF;
-  padding: 20px;
+    background-color: #E6F2FF;
+    padding: 20px;
 }
 
 button {
-  display: block;
-  margin: 10px auto;
-  padding: 10px 20px;
-  font-size: 16px;
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    font-size: 16px;
 }
 
 .chart-container {
-  width: 80%;
-  margin: 0 auto;
+    width: 80%;
+    margin: 0 auto;
 }
 
-.position{
-  background-color: greenyellow;
-  padding:20px;
+.position {
+    background-color: greenyellow;
+    padding: 20px;
 }
 
 #position-text {
-  color:gray;
+    color: gray;
 }
