@@ -81,7 +81,7 @@ function writeToThingSpeak(apiKey, field1Value, fieldNumber) {
     // var channelID = '2151464';
     var url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${fieldRoom}=${field1Value}`;
     console.log(fieldRoom);
-    console.log(field1Value);
+    // console.log(field1Value);
     fetch(url, {
       method: 'POST',
       headers: {
