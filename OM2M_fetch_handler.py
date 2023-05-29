@@ -1,6 +1,6 @@
 import requests,requests
 from flask import Flask,jsonify
-url = "http://127.0.0.1:5089/~/in-cse/in-name/AE-TEST/User-Patterns/What_Room_Is_Grandma_In"
+url = "http://127.0.0.1:5089/~/in-cse/in-name/User-Patterns/What_Room_Is_Grandma_In"
 from flask_cors import CORS
 app = Flask(__name__)
 
