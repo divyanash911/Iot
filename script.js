@@ -241,7 +241,9 @@ function toggleDoor() {
   .then(data => {
      if(data){
       console.log(data);
-    
+      const text=document.getElementById("position-text");
+      text.innerHTML=`Granny is in room ${data["data"]}`;
+
       }
       else{
         console.log("error")
