@@ -8,8 +8,8 @@
 
 #define mqttport 1883
 
-char ssid[] = "moto g22_9515";
-char password[] = "3b5bvrygds7irdj";
+char ssid[] = "Wifi Name";
+char password[] = "Wifi Pass";
 const char* server = "mqtt3.thingspeak.com";
 char mqttUserName[] = "OBcKHTwFDSY9LhwEJTkLEAU";
 char mqttClientID[] = "OBcKHTwFDSY9LhwEJTkLEAU";
