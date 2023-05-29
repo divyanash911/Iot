@@ -8,7 +8,7 @@ char ssid[] = "Wifi Name";
 char password[] = "Wifi Pass";
 
 
-#define CSE_IP "192.168.128.133" //CHANGE THIS IP ADDRESS FOR EACH COMPUTER "ifconfig command"
+#define CSE_IP "IP GOES HERE" //CHANGE THIS IP ADDRESS FOR EACH COMPUTER "ifconfig command"
 #define CSE_PORT 5089
 #define OM2M_ORGIN "admin:admin"
 #define OM2M_MN "/~/in-cse/in-name/"
