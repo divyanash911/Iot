@@ -4,15 +4,15 @@
 #include "ThingSpeak.h"
 #define CHANNEL_ID 2165461
 #define API_KEY "CQA08TED4R0B70XX"
-char ssid[] = "Wifi Name";
-char password[] = "Wifi Pass";
+char ssid[] = "Arya Topale";
+char password[] = "dp12wifi";
 
 
-#define CSE_IP "IP GOES HERE" //CHANGE THIS IP ADDRESS FOR EACH COMPUTER "ifconfig command"
+#define CSE_IP "192.168.66.102" //CHANGE THIS IP ADDRESS FOR EACH COMPUTER "ifconfig command"
 #define CSE_PORT 5089
 #define OM2M_ORGIN "admin:admin"
 #define OM2M_MN "/~/in-cse/in-name/"
-#define OM2M_AE "User-Patterns"
+#define OM2M_AE "AE-TEST/User-Patterns"
 #define OM2M_DATA_CONT "What_Room_Is_Grandma_In"
 
 
@@ -45,7 +45,7 @@ int US2;
 int US3;
 int US4;
 
-int Current_Room;
+int Current_Room=0;
 // int i = 0;
 
 // const int LedPin = 13;    // Left LED pin, optional if you want led to light up when motion is detected
@@ -103,10 +103,20 @@ void loop() {
 
   if (thresholdBroken(trigPin1, echoPin1)){
     // Serial.println("Grandma is moving);
+    
     US1 = 1;
     US2 = 0;
     US3 = 0;
     US4 = 0;
+    if(Current_Room==1){
+      Serial.println("Grandma 2");
+      Current_Room=2;
+    }
+    
+    else{
+      Serial.println("Grandma 1");
+      Current_Room=1;
+    }
   }
   else if (thresholdBroken(trigPin2, echoPin2)){
     // Serial.println("Grandma is moving);
@@ -114,6 +124,15 @@ void loop() {
     US2 = 1;
     US3 = 0;
     US4 = 0;
+    if(Current_Room==2){
+      Serial.println("Grandma 3");
+      Current_Room=3;
+
+    }
+    else{
+      Serial.println("Grandma 2");
+      Current_Room=2;
+    }
   }
   else if (thresholdBroken(trigPin3, echoPin3)){
     // Serial.println("Grandma is moving);
@@ -121,6 +140,14 @@ void loop() {
     US2 = 0;
     US3 = 1;
     US4 = 0;
+    if(Current_Room==3){
+      Serial.println("Grandma 4");
+      Current_Room=4;
+    }
+    else{
+      Serial.println("Grandma 3");
+      Current_Room=3;
+    }
   }
   else if (thresholdBroken(trigPin4, echoPin4)){
     // Serial.println("Grandma is moving);
@@ -128,55 +155,58 @@ void loop() {
     US2 = 0;
     US3 = 0;
     US4 = 1;
+    if(Current_Room==4){
+      Serial.println("Grandma 3");
+      Current_Room=4;
+    }
+    else{
+      Serial.println("Grandma 4");
+      Current_Room=3;
+    }
   }
 
-  Serial.println(US1);
-  Serial.println(US2);
-  Serial.println(US3);
-  Serial.println(US4);
-  Serial.println();
  
-  if (motionDetected(PirPin1) == 0 && US1 == 1) {
-    // digitalWrite(LedPin, HIGH);
-    Serial.println("Grandma has left the house");
+  // if (motionDetected(US1 == 1) ){
+  //   // digitalWrite(LedPin, HIGH);
+  //   Serial.println("Grandma has left the house");
 
-    Current_Room = 0;
-  }
-  else if (motionDetected(PirPin1) == 1 && US1 == 1) {
-    Serial.println("Grandma has entered the house");
+  //   Current_Room = 0;
+  // }
+  // else if (motionDetected(US1 == 1)) {
+  //   Serial.println("Grandma has entered the house");
 
-    Current_Room = 1;
-  }
-  else if (motionDetected(PirPin2) == 0 && US2 == 1) {
-    Serial.println("Grandma is going from room 2 to room 1");
+  //   Current_Room = 1;
+  // }
+  // else if (motionDetected(US2 == 1)) {
+  //   Serial.println("Grandma is going from room 2 to room 1");
     
-    Current_Room = 1;
-  }
-  else if (motionDetected(PirPin2) == 1 && US2 == 1) {
-    Serial.println("Grandma is going from room 1 to room 2");
+  //   Current_Room = 1;
+  // }
+  // else if (motionDetected(US2 == 1)) {
+  //   Serial.println("Grandma is going from room 1 to room 2");
     
-    Current_Room = 2;
-  }
-  else if (motionDetected(PirPin3) == 0 && US3 == 1) {
-    Serial.println("Grandma is going from room 3 to room 2");
+  //   Current_Room = 2;
+  // }
+  // else if (motionDetected(US3 == 1)) {
+  //   Serial.println("Grandma is going from room 3 to room 2");
     
-    Current_Room = 2;
-  }
-  else if (motionDetected(PirPin3) == 1 && US3 == 1) {
-    Serial.println("Grandma is going from room 2 to room 3");
+  //   Current_Room = 2;
+  // }
+  // else if (motionDetected(US3 == 1)) {
+  //   Serial.println("Grandma is going from room 2 to room 3");
     
-    Current_Room = 3;
-  }
-  else if (motionDetected(PirPin4) == 0 && US4 == 1) {
-    Serial.println("Grandma is going from room 4 to room 3");
+  //   Current_Room = 3;
+  // }
+  // else if (motionDetected(US4 == 1)) {
+  //   Serial.println("Grandma is going from room 4 to room 3");
     
-    Current_Room = 3;
-  }
-  else if (motionDetected(PirPin4) == 1 && US4 == 1) {
-    Serial.println("Grandma is going from room 3 to room 4");
+  //   Current_Room = 3;
+  // }
+  // else if (motionDetected(US4 == 1)) {
+  //   Serial.println("Grandma is going from room 3 to room 4");
     
-    Current_Room = 4;
-  }
+  //   Current_Room = 4;
+  // }
 
 Serial.println(Current_Room);
   const int NUM_FIELDS = 4;
