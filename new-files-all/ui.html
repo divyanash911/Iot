@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>SMART HOME UI</title>
+    <link href="./ui.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="./project_files/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;300;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+
+</head>
+<body style="background-color: black; font-family: 'Josefin sans', sans-serif;">
+    <div class="nav">
+        <img src="./pngs/logo.png" height="87" width="90" style="padding-top: 1%;margin-left: 2%;">
+        <a class="navitem" href="#3" id="current" style="font-family: 'Josefin Sans', sans-serif; font-weight: 300;">Controls</a>
+        <a class="navitem" href="#2" style="font-family: 'Josefin Sans', sans-serif; font-weight: 300;">Health</a>
+        <a class="navitem" href="#1" style="font-family: 'Josefin Sans', sans-serif; font-weight: 300;">Dashboard</a>
+        <p class="navitem" class="disable-hover" style="font-family: 'Josefin Sans', sans-serif; font-weight: 300; font-size: 300%; text-decoration: none; align-items: center; padding-right: 12%;">Home.</a>
+    </div>
+
+    <div id="alerts"></div>
+    <div id="alerts1"></div>
+    <div id="container">        
+        <div id="1" class="section" style="background-color: beige; align-items: flex-start;">
+            <div class="dashboard" style="height: 15%;">DASHBOARD</div>
+            <div class="text" style="padding-left: 5%;">Welcome to your home management smart system. Here are some current statuses:</div>
+            <div class="tempnhumidity" style="align-items: flex-start;">
+                <div class="square" style="margin-right: 20%; background-image: url('./pngs/temp.png'); background-size: cover;">
+                    <div class="overlay-text">
+                        <h2>TEMP</h2>
+                        <p>23&deg;C</p>
+                    </div>
+                </div>
+                <div class="square" style="background-image: url('./pngs/humidity.png'); background-size: cover;">
+                    <div class="position">
+                        <h2>OCCUPANT IS IN ROOM:</h2>
+                        <p id="position-text"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="horizontal-div">
+                <div class="horizontal-content">
+                    <div class="door-overlay">
+                        <p id="para">FRONT DOOR STATUS:</p>
+                        <p id="para">locked</p>
+                    </div>
+                  <!-- Content of the horizontal div here -->
+                </div>
+              </div>
+        </div>
+
+        <div id="2" class="section" style="background-color: black; color: white;">
+            <div class="health">HEALTH</div>
+            <div class="chart-container">
+                <canvas id="chart_1"></canvas>
+            </div>
+        </div>
+        <div id="3" class="section" style="background-color: beige; height: 300%">
+            <div class="controls">CONTROLS</div>
+            <div class="controlcontainer" style="align-items: flex-start; padding-top: 5%;">
+                <div class="lights" id="lightpic" style="background-image: url('./pngs/offbulb.png'); background-size: cover;">
+                    <div class="control-overlay" style="display: flex; flex-direction: column; align-items: center;justify-content: flex-end; padding-top: 100%;">
+                        <button id="lightButton" onclick="toggleLight()">Turn Light Off</button>
+                    </div>
+                </div>
+                <div class="square" id="lockpic" style="background-image: url('./pngs/unlocked.png'); background-size: cover;">
+                    <div class="control-overlay" style="display: flex; flex-direction: column; align-items: center;justify-content: flex-end; padding-top: 100%;">
+                        <button id="doorButton" onclick="toggleDoor()">Close Door</button>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+        <!-- Add more sections as needed -->
+    </div>
+
+    <script src="ui.js"></script>
+</body>
+</html>
