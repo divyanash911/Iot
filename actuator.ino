@@ -1,3 +1,5 @@
+
+
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <HTTPClient.h>
@@ -18,7 +20,8 @@ unsigned int dataFieldThree=3;
 unsigned int dataFieldFour=4;
 
 const char* CurrentRoom;
-
+const char* Status;
+const char* Door;
 unsigned long channelID2= 2165472;
 char* readAPIkey2="N62FEX47OUTCEIL4";
 
@@ -34,12 +37,13 @@ const char* mqttPassword = "OwEpA4RuSjFFfZNzg6fGoBXa";
 // const char* mqttTopic = "channels/2165461/publish/fields/field2/GFLOH9S1XRN3NPPS";
 
 const int ledPin1 = 32;
-const int ledPin2= 33;
-const int ledPin3= 34;
+const int ledPin2= 26;
+const int ledPin3= 27;
 const int ledPin4= 25;
 const int buzzerPin=14;
 // const int ledPin2= 18;
 
+char currentdoor='0';
 
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
@@ -76,7 +80,8 @@ else
 
 void setup() {
   // myservo.attach(5);
-  myservo.attach(5);
+  myservo.attach(33);
+  myservo.write(150);
   Serial.begin(9600);
   connectToWiFi();
   pinMode(ledPin1,OUTPUT);
@@ -112,10 +117,16 @@ void loop() {
         Serial.println(httpCode);
         JSONVar my_obj = JSON.parse(payload);
         CurrentRoom = my_obj["data"];
+        Status = my_obj["status"];
+        Door = my_obj["door"];
         Serial.print("Current Room: ");
         Serial.println(CurrentRoom);
         
+        Serial.print("LED Status: ");
+        Serial.println(Status);
 
+        Serial.print("Door Status: ");
+        Serial.println(Door);     
       }
 
     else {
@@ -125,28 +136,28 @@ void loop() {
 
     http.end();    
 
-    if(CurrentRoom[0]=='1')
+    if(CurrentRoom[0]=='1' && Status[0]=='1')
     {
       digitalWrite(ledPin1,HIGH);
       digitalWrite(ledPin2,LOW);
       digitalWrite(ledPin3,LOW);
       digitalWrite(ledPin4,LOW);
     }
-    else if(CurrentRoom[0]=='2')
+    else if(CurrentRoom[0]=='2'&& Status[0]=='1')
     {
       digitalWrite(ledPin1,LOW);
       digitalWrite(ledPin2,HIGH);
       digitalWrite(ledPin3,LOW);
       digitalWrite(ledPin4,LOW);
     }
-    else if(CurrentRoom[0]=='3')
+    else if(CurrentRoom[0]=='3' && Status[0]=='1')
     {
       digitalWrite(ledPin1,LOW);
       digitalWrite(ledPin2,LOW);
       digitalWrite(ledPin3,HIGH);
       digitalWrite(ledPin4,LOW);
     }
-    else if(CurrentRoom[0]=='4')
+    else if(CurrentRoom[0]=='4'&& Status[0]=='1')
     {
       // Serial.println("Boobieboy mc");
       digitalWrite(ledPin1,LOW);
@@ -154,7 +165,42 @@ void loop() {
       digitalWrite(ledPin3,LOW);
       digitalWrite(ledPin4,HIGH);
     }
+    else{
+      digitalWrite(ledPin1,LOW);
+      digitalWrite(ledPin2,LOW);
+      digitalWrite(ledPin3,LOW);
+      digitalWrite(ledPin4,LOW);
+    }
 
+    Serial.print("Current door status is ");
+    Serial.println(Door);
+
+    if(Door[0]=='1')
+    {
+      myservo.write(150);
+      delay(1500);
+      Serial.println("Door Opened");
+      currentdoor=Door[0];
+
+      
+    }
+    else if(Door[0]=='0')
+    {
+      myservo.write(70);
+      delay(1500);
+      Serial.println("Door Closed");
+      currentdoor=Door[0];
+    }
+    // else{
+    //   if(currentdoor=='1'){
+    //     myservo.write(180);
+    //   delay(1500);
+    //   }
+    //   else{
+    //     myservo.write(60);
+    //   delay(1500);
+    //   }
+    // }
   // Serial.println("Fetching position Data:");
   // int data1=readTSData(channelID,dataFieldOne);
   // int data2=readTSData(channelID,dataFieldTwo);
@@ -199,7 +245,7 @@ void loop() {
   //   }
       
     Serial.println("Fetching buzzer Data:");
-  int data=readTSData2(channelID2,1);
+   int data=readTSData2(channelID2,1);
     Serial.println(data);
     if(data==1)
     digitalWrite(buzzerPin,LOW);
@@ -208,26 +254,12 @@ void loop() {
       // Serial.println("madar");
     digitalWrite(buzzerPin,HIGH);
     }
-    Serial.println("Fetching door Data:");
-  data=readTSData3(channelID3,1);
-    Serial.println(data);
-//  ThingSpeak.writeField( channelID3 ,1, 1,writeAPIkey3);
-    // delay(16000);
-    // int dataashwin=1;
-    if(data==1)
-    {
-      myservo.write(90);
-    Serial.println("Door Opened");
- 
- delay(16000);
- ThingSpeak.writeField( channelID3 ,1, 0,writeAPIkey3);
-    }
-    else
-    {
-    myservo.write(0);
-    Serial.println("Door Closed");
-    }
-
+//     Serial.println("Fetching door Data:");
+//   data=readTSData3(channelID3,1);
+//     Serial.println(data);
+// //  ThingSpeak.writeField( channelID3 ,1, 1,writeAPIkey3);
+//     // delay(16000);
+//     // int dataashwin=1;
 }
 
 int readTSData(long TSChannel, unsigned int TSField)
