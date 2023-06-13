@@ -1,0 +1,324 @@
+#include "WiFi.h"
+// http://127.0.0.1:5089/~/in-cse/in-name/AE-TEST/Node-1/Data/la
+#include <HTTPClient.h>
+#include <stdlib.h>
+#include <ArduinoHttpClient.h>
+#include "ThingSpeak.h"
+#define LPG_ID 2163504
+#define LPG_API_KEY "187CSQURHUJGTFM9"
+#define TEMP_ID 2151439
+#define TEMP_API_KEY "LF9Z2ZSVFXM5NT9Y"
+#define FLAME_ID  2165795
+#define FLAME_API_KEY "UAR8XNTOZDVUVM18"
+#define SMOKE_ID 2165803
+#define SMOKE_API_KEY "ZCXLSEK4TJQEJ7UT"
+#define CSE_IP "192.168.3.198"
+#define CSE_PORT 5089
+#define OM2M_ORGIN "admin:admin"
+#define OM2M_MN "/~/in-cse/in-name/"
+#define OM2M_AE "Fire-Status"
+#define OM2M_DATA_CONT1 "Flame"
+#define OM2M_DATA_CONT2 "Smoke"
+#define OM2M_DATA_CONT3 "LPG"
+#define OM2M_DATA_CONT4 "Temperature"
+HTTPClient http;
+//server + String() + OM2M_AE + "/" + OM2M_DATA_CONT2 + "/"
+#define WIFI_TIMEOUT_MS 20000
+char ssid[]="KP";
+char password[]="vclt5156";
+
+//extra code
+const char* serverAddress = "192.168.3.198";
+const int serverPort = 5089;
+const char* resourcePath = "/~/in-cse/cnt-838905959";
+
+
+// Variables
+int data = 0;
+
+// WiFiClient object to handle the connection
+WiFiClient wifiClient;
+
+// HttpClient object
+HttpClient httpClient = HttpClient(wifiClient, serverAddress, serverPort);
+
+
+
+
+
+
+
+
+
+#define temp_pin 33
+#define ADC_VREF_mV 900.0
+#define ADC_RESOLUTION 4096.0
+#define lpgSensorDigitalPin 2
+#define lpgSensorAnalogPin 36
+#define flameDigital 32
+#define flameAnalog 39
+#define smokeDigital 27
+#define smokeAnalog 34
+#define ALERT_ID 2165472
+#define ALERT_API_KEY "CB1XBMIGOF1UPLXR"
+
+int counter=0;
+float x_sum=0;
+float nloop=0;
+WiFiClient client;
+void connectToWiFi(){
+  WiFi.begin(ssid,password);
+  while(WiFi.status()!=WL_CONNECTED){
+    delay(1000);
+    Serial.println("Connecting to Wifi...");
+  }
+  Serial.println("Connected");
+}
+
+void setup() {
+  Serial.begin(9600);
+  connectToWiFi();
+  ThingSpeak.begin(client);
+  pinMode(lpgSensorDigitalPin, INPUT);
+  pinMode(lpgSensorAnalogPin, INPUT);
+  pinMode(flameDigital, INPUT);
+  pinMode(flameAnalog, INPUT);
+  pinMode(smokeDigital, INPUT);
+  pinMode(smokeAnalog, INPUT);
+  pinMode(temp_pin, INPUT);
+}
+
+void loop() {    
+  int lpgValueDigital = digitalRead(lpgSensorDigitalPin);
+  int lpgValueAnalog = analogRead(lpgSensorAnalogPin);
+    
+  Serial.print("Digital of LPG: ");
+  Serial.println(lpgValueDigital);
+  Serial.print("Analog of LPG: ");
+  Serial.println(lpgValueAnalog);       //base value: 2100-2200
+    
+  int flameValueDigital = digitalRead(flameDigital);
+  int flameValueAnalog = analogRead(flameAnalog);
+    
+  Serial.print("Digital of Flame: ");
+  Serial.println(flameValueDigital);
+  Serial.print("Analog of Flame: ");//base value: 4095
+  Serial.println(flameValueAnalog);
+    
+
+  int smokeValueDigital = digitalRead(smokeDigital);
+  int smokeValueAnalog = analogRead(smokeAnalog);
+ 
+  Serial.print("Digital of Smoke: ");//unrealiable
+  Serial.println(smokeValueDigital);
+  Serial.print("Analog of Smoke: ");//base value: 200-250
+  Serial.println(smokeValueAnalog);
+  // Serial.println(" ");
+
+  String label = "Label";
+  String data;
+  String server = "http://" + String() + CSE_IP + ":" + String() + CSE_PORT + String() + OM2M_MN;
+
+  http.begin(server + String() + OM2M_AE + "/" + OM2M_DATA_CONT1 + "/");
+
+  http.addHeader("X-M2M-Origin", OM2M_ORGIN);
+  http.addHeader("Content-Type", "application/json;ty=4");
+  http.addHeader("Content-Length", "100");
+
+
+    
+  ThingSpeak.writeField( LPG_ID ,1, lpgValueAnalog, LPG_API_KEY);
+  ThingSpeak.writeField( LPG_ID ,2, lpgValueDigital, LPG_API_KEY);
+  ThingSpeak.writeField( FLAME_ID ,1, flameValueAnalog, FLAME_API_KEY);
+  ThingSpeak.writeField( FLAME_ID ,2, flameValueDigital, FLAME_API_KEY);
+  ThingSpeak.writeField( SMOKE_ID ,1, smokeValueAnalog, SMOKE_API_KEY);
+  ThingSpeak.writeField( SMOKE_ID ,2, smokeValueDigital, SMOKE_API_KEY);
+
+
+  // ThingSpeak.writeField()
+  //  ThingSpeak.writeField( CHANNEL_ID ,1, tempr/nloop, CHANNEL_API_KEY);
+
+  Serial.print("Temperature measured is: ");  float temp=analogRead(temp_pin);//base value- 19-30(room temp) 30-35(body-temp)
+  // temp *= (ADC_VREF_mV/ADC_RESOLUTION);
+  temp /= 10;
+  if(lpgValueDigital==1||flameValueDigital==0||smokeValueAnalog>900||temp>120)
+    ThingSpeak.writeField( ALERT_ID ,1, 1, ALERT_API_KEY);
+  else
+    ThingSpeak.writeField( ALERT_ID ,1, 0, ALERT_API_KEY);
+
+  Serial.println(temp)
+  ;//threshold temp =>50
+  Serial.println(" ");
+  ThingSpeak.writeField( TEMP_ID ,1, temp, TEMP_API_KEY);
+
+
+  
+  data = "[" + String(flameValueAnalog) + "]"; 
+  String req_data = String() + "{\"m2m:cin\": {"
+
+    +
+    "\"con\": \"" + data + "\","
+
+    +
+    "\"lbl\": \"" + label + "\","
+
+    // + "\"rn\": \"" + "Entry "+String(i++) + "\","
+
+    +
+    "\"cnf\": \"text\""
+
+    +
+    "}}";
+  int code = http.POST(req_data);
+  http.end();
+
+  
+   label = "Label";
+   data;
+   server = "http://" + String() + CSE_IP + ":" + String() + CSE_PORT + String() + OM2M_MN;
+
+  http.begin(server + String() + OM2M_AE + "/" + OM2M_DATA_CONT2 + "/");
+
+  http.addHeader("X-M2M-Origin", OM2M_ORGIN);
+  http.addHeader("Content-Type", "application/json;ty=4");
+  http.addHeader("Content-Length", "100");
+
+  data = "[" + String(smokeValueAnalog) + "]"; 
+   req_data = String() + "{\"m2m:cin\": {"
+
+    +
+    "\"con\": \"" + data + "\","
+
+    +
+    "\"lbl\": \"" + label + "\","
+
+    // + "\"rn\": \"" + "Entry "+String(i++) + "\","
+
+    +
+    "\"cnf\": \"text\""
+
+    +
+    "}}";
+   code = http.POST(req_data);
+  http.end();
+
+  
+   label = "Label";
+   data;
+   server = "http://" + String() + CSE_IP + ":" + String() + CSE_PORT + String() + OM2M_MN;
+
+  http.begin(server + String() + OM2M_AE + "/" + OM2M_DATA_CONT3 + "/");
+
+  http.addHeader("X-M2M-Origin", OM2M_ORGIN);
+  http.addHeader("Content-Type", "application/json;ty=4");
+  http.addHeader("Content-Length", "100");
+
+  data = "[" + String(lpgValueAnalog) + "]"; 
+   req_data = String() + "{\"m2m:cin\": {"
+
+    +
+    "\"con\": \"" + data + "\","
+
+    +
+    "\"lbl\": \"" + label + "\","
+
+    // + "\"rn\": \"" + "Entry "+String(i++) + "\","
+
+    +
+    "\"cnf\": \"text\""
+
+    +
+    "}}";
+   code = http.POST(req_data);
+  http.end();
+Serial.println(code);
+
+
+  
+   label = "Label";
+   data;
+  server = "http://" + String() + CSE_IP + ":" + String() + CSE_PORT + String() + OM2M_MN;
+
+  http.begin(server + String() + OM2M_AE + "/" + OM2M_DATA_CONT4 + "/");
+
+  http.addHeader("X-M2M-Origin", OM2M_ORGIN);
+  http.addHeader("Content-Type", "application/json;ty=4");
+  http.addHeader("Content-Length", "100");
+
+  data = "[" + String(temp) + "]"; 
+   req_data = String() + "{\"m2m:cin\": {"
+
+    +
+    "\"con\": \"" + data + "\","
+
+    +
+    "\"lbl\": \"" + label + "\","
+
+    // + "\"rn\": \"" + "Entry "+String(i++) + "\","
+
+    +
+    "\"cnf\": \"text\""
+
+    +
+    "}}";
+   code = http.POST(req_data);
+  http.end();
+
+
+getDataFromServer();
+
+
+Serial.println(code);
+
+ delay(3000);
+
+}
+
+void getDataFromServer() {
+  // Create a WiFiClient object
+  WiFiClient client;
+
+  // Connect to the server
+  if (client.connect(serverAddress, serverPort)) {
+    Serial.println("Connected to server!");
+
+    // Make a GET request
+    client.print(String("GET ") + resourcePath + " HTTP/1.1\r\n" +
+                 "Host: " + serverAddress + "\r\n" +
+                 "Connection: close\r\n\r\n");
+
+    // Wait for the server's response
+    while (client.connected() && !client.available()) {
+      delay(100);
+    }
+
+    // Read the response
+    while (client.available()) {
+      String line = client.readStringUntil('\n');
+      Serial.println(line);
+
+      // Extract the data from the response
+      if (line.startsWith("data: ")) {
+        data = line.substring(6).toInt();
+        Serial.println("Data received: " + String(data));
+      }
+    }
+
+    // Disconnect from the server
+    client.stop();
+    Serial.println("Disconnected from server!");
+  } else {
+    Serial.println("Connection failed!");
+  }
+}
+// Make sure to replace the placeholders your_SSID and your_PASSWORD with your actual Wi-Fi network credentials. Also, ensure that the serverAddress is set to "127.0.0.1" and serverPort is set to 5089, as mentioned in your link. Lastly, set the resourcePath to "/~/in-cse/in-name/AE-TEST/Node-1/Data/la" based on your provided link.
+
+// With these modifications, the code should be able to retrieve the integer data from the specified OM2M server resource.
+
+
+
+
+
+
+
+
