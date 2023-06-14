@@ -77,7 +77,7 @@ function readFireDetectionStatus(apiKey) {
           const div = document.createElement('div');
           div.classList.add('alert');
           div.innerHTML = `<h2>ALERT!</h2>
-          <p>FIRE DETECTED! PLEASE EVACUATE.</p>
+          <p>HAZARD DETECTED! PLEASE EVACUATE.</p>
           `;
           document.getElementById('alerts1').appendChild(div);
         }
