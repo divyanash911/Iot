@@ -2,6 +2,20 @@ let fieldRoom;
 let ledstatus=0;
 let doorstatus=0;
 
+function readTemperature(apiKey) {
+  var url = `https://api.thingspeak.com/channels/2163504/fields/1.json?api_key=${apiKey}&results=2`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      var temperature = parseFloat(data.feeds[1].field1);
+      var temperatureElement = document.querySelector('#temperature');
+      temperatureElement.innerHTML = temperature.toFixed(2)+"&deg;C";
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
 
 
 function readLPGDetectionStatus(apiKey) {
@@ -278,6 +292,9 @@ function toggleDoor() {
   setInterval(function() {
     readLPGDetectionStatus('DOIX278CD05M3IPD');
   }, 5000); // Read the smoke detection status every 5 seconds (adjust the interval as needed)
+  setInterval(function() {
+    readTemperature('25YTOHWLU63JIRZX');
+  }, 5000);
   
 
   
