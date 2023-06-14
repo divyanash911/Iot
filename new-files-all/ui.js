@@ -1,4 +1,9 @@
 let fieldRoom;
+let ledstatus=0;
+let doorstatus=0;
+
+
+
 function readLPGDetectionStatus(apiKey) {
   var url = `https://api.thingspeak.com/channels/2163504/fields/1.json?api_key=${apiKey}&results=2`;
 
@@ -184,16 +189,38 @@ function toggleLight() {
         lightButton.innerHTML = "Turn Light Off";
         writeToThingSpeak('CQA08TED4R0B70XX', 1, fieldRoom);
         console.log("Turning light on");
+        ledstatus=1;
         container.style.backgroundImage = "url('./pngs/onbulb.png')"; ///EDIT
     }
     else{
         lightButton.innerHTML = "Turn Light On";
         writeToThingSpeak('CQA08TED4R0B70XX', 0, fieldRoom);
+        ledstatus=0;
         console.log("Turning light off");
         container.style.backgroundImage = "url('./pngs/offbulb.png')"; ///EDIT
     }
 
     // console.log("Updated innerHTML:", lightButton.innerHTML);
+
+    jsondict={"doorstatus":doorstatus,"led":ledstatus}
+    console.log(jsondict)
+      fetch('http://localhost:8000/om2m', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(jsondict)
+      
+    })
+    .then(response => {
+      // Handle the response from the server
+      console.log('Data sent successfully');
+    })
+    .catch(error => {
+      // Handle any errors
+      console.error('Error:', error);
+    });
+    
   }
 
 
@@ -204,17 +231,37 @@ function toggleDoor() {
   
     if (doorButton.innerHTML === "Open Door") {
       doorButton.innerHTML = "Close Door";
+      doorstatus=1;
       writeToThingSpeak('UGEDUGRFKOC59M9R', 1, 1); // Write "1" to ThingSpeak to open the door
       console.log("Opening the door");
       container.style.backgroundImage = "url('./pngs/unlocked.png')"; ///EDIT
 
     } else {
+      doorstatus=0;
       doorButton.innerHTML = "Open Door";
       writeToThingSpeak('UGEDUGRFKOC59M9R', 0, 1); // Write "0" to ThingSpeak to close the door
       console.log("Closing the door");
       container.style.backgroundImage = "url('./pngs/locked.png')"; ///EDIT
 
     }
+    jsondict={"doorstatus":doorstatus,"led":ledstatus}
+    console.log(jsondict)
+      fetch('http://localhost:8000/om2m', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(jsondict)
+      
+    })
+    .then(response => {
+      // Handle the response from the server
+      console.log('Data sent successfully');
+    })
+    .catch(error => {
+      // Handle any errors
+      console.error('Error:', error);
+    });
   }
   
   // function acknowledgeAlert() {
@@ -232,6 +279,8 @@ function toggleDoor() {
     readLPGDetectionStatus('DOIX278CD05M3IPD');
   }, 5000); // Read the smoke detection status every 5 seconds (adjust the interval as needed)
   
+
+  
   fetch('http://localhost:8000/endpoint')
   .then(response => response.json())
   .then(data => {
@@ -245,3 +294,6 @@ function toggleDoor() {
         console.log("error")
       }
   })
+
+  
+  

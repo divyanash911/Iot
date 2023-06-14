@@ -418,7 +418,8 @@ nav div a.disable-hover:hover {
 }
 
 .chart {
-    height: 70%;
+    height: 700em;
+    width:80em;
 }
 
 .health {
@@ -518,4 +519,8 @@ nav div a.disable-hover:hover {
     font-weight: 300; 
     font-size: 250%; 
 
+}
+
+#chart_1{
+    width:80vw;
 }

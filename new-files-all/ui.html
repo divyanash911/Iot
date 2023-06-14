@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;300;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 <body style="background-color: black; font-family: 'Josefin sans', sans-serif;">
@@ -62,12 +62,12 @@
             <div class="controlcontainer" style="align-items: flex-start; padding-top: 5%;">
                 <div class="lights" id="lightpic" style="background-image: url('./pngs/offbulb.png'); background-size: cover;">
                     <div class="control-overlay" style="display: flex; flex-direction: column; align-items: center;justify-content: flex-end; padding-top: 100%;">
-                        <button id="lightButton" onclick="toggleLight()">Turn Light Off</button>
+                        <button id="lightButton" onclick="toggleLight()">Turn Light On</button>
                     </div>
                 </div>
                 <div class="square" id="lockpic" style="background-image: url('./pngs/unlocked.png'); background-size: cover;">
                     <div class="control-overlay" style="display: flex; flex-direction: column; align-items: center;justify-content: flex-end; padding-top: 100%;">
-                        <button id="doorButton" onclick="toggleDoor()">Close Door</button>
+                        <button id="doorButton" onclick="toggleDoor()">Open Door</button>
                     </div>
                 </div>
             </div>
